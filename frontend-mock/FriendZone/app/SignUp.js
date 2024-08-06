@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, View, ActivityIndicator,TouchableOpacity } from 'react-native';
-import { useStripe, StripeProvider } from '@stripe/stripe-react-native';
 import { Checkbox, Button, TextInput as PaperTextInput, Provider, DefaultTheme } from 'react-native-paper';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
@@ -32,7 +31,7 @@ const Payment = () => {
   const [usernameError, setUsernameError] = useState(""); // State for username error message
   const [ageError, setAgeError] = useState(""); // State for age error message
   const [checkboxError, setCheckboxError] = useState(""); // State for checkbox error message
-  const stripe = useStripe();
+
 
   // Function to fetch current location and set governorate
   const fetchCurrentLocation = async () => {
@@ -103,10 +102,10 @@ const Payment = () => {
 
     try {
       const userData = {
-        CIN: "003304500",
-        parentName: "Mehhrrrez",
-        parentEmail: "Mehhrerz@example.com",
-        parentPassword: "getdunked0",
+        CIN: "003304529",
+        parentName: "Mehhhhhhhhrrrez",
+        parentEmail: "Mehhhhhhhrerz@example.com",
+        parentPassword: "hamdi2002",
         phoneNumber: "22456978",
         address: "Med Alii,Gabes",
         paymentInfo: "Payyment-info",
@@ -117,7 +116,7 @@ const Payment = () => {
       };
 
       //sending request
-      const response = await fetch('http://192.168.100.168:3000/api/auth/signup', {
+      const response = await fetch('http://localhost:3000/api/auth/signup', {
         method: 'POST',
         body: JSON.stringify(userData),
         headers: {
@@ -126,21 +125,10 @@ const Payment = () => {
       });
       const data = await response.json();
       if (!response.ok) return Alert.alert(data.message);
-      const clientSecret = data.clientSecret;
-
-      const initSheet = await stripe.initPaymentSheet({
-        paymentIntentClientSecret: clientSecret,
-        merchantDisplayName: 'Hamdi Baccar', // Your merchant name
-      });
-
-      if (initSheet.error) return Alert.alert(initSheet.error.message)
-      //here on payment sheet we can add googlePay,applePay etc..
-      const presentSheet = await stripe.presentPaymentSheet({
-        clientSecret,
-      })
-      // Payment already attempted here so we see if there is any error
-      if (presentSheet.error) return Alert.alert(presentSheet.error.message)
-      Alert.alert('Payment complete, thank you!')
+      else{
+        return Alert.alert('SignUp has been successfully completed!')
+      }
+      
     }
     catch (err) {
       console.log(err);
@@ -151,7 +139,7 @@ const Payment = () => {
   };
 
   return (
-    <StripeProvider publishableKey="pk_test_51PbdenJBJKmjBomNpKq6rENY0lu4edzffHYk2dAVqQXg1FAOFHKoevb1QXmDAELfQ7JNmGpvaTEj91AbFhkPDxDn00ca3VtAkU">
+    
       <Provider theme={customTheme}>
         <View style={styles.container}>
           <View style={styles.content}>
@@ -197,7 +185,7 @@ const Payment = () => {
                 onPress={() => setIsAgeConfirmed(!isAgeConfirmed)}
                 color="#4E7AD0"
               />
-              <Text style={styles.label}>I confirm that my child is {age} years old</Text>
+              <Text style={styles.Childlabel}>I confirm that my child is {age} years old</Text>
             </View>
             {checkboxError ? <Text style={styles.errorText}>{checkboxError}</Text> : null}
 
@@ -227,7 +215,7 @@ const Payment = () => {
           </View>
         </View>
       </Provider>
-    </StripeProvider>
+
   );
 };
 
@@ -244,8 +232,16 @@ const styles = StyleSheet.create({
     padding: wp('7%'),
     justifyContent: 'center',
   },
+
+  Childlabel:{
+    color: '#5A5A5A',
+    fontFamily: 'Poppins-Medium',
+    fontWeight: '500',
+    marginTop:1,
+  },
+
   header: {
-    marginTop: hp('20%'),
+    marginTop: hp('8%'),
     fontFamily: 'Poppins-SemiBold',
     fontSize: 20,
     fontWeight: '600',

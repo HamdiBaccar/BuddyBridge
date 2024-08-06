@@ -3,18 +3,15 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const Stripe = require('stripe');
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const authRoutes = require('./routes/auth');
-const stripeRoutes = require('./routes/stripe');
-
+const FriendSuggRoutes = require('./routes/FriendSuggestion');
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/api/auth', authRoutes);
-app.use('/stripe', stripeRoutes);
+app.use('/api',FriendSuggRoutes);
 
 mongoose.connect('mongodb://localhost:27017/auth-db', {
     useNewUrlParser: true,

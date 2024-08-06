@@ -39,7 +39,7 @@ export default function OBScreen() {
 
 
   const GoToSignUpPress = () => {
-      router.push('/Payment');
+      router.push('/HomePage');
    
   };
 

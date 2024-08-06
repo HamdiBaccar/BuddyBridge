@@ -27,10 +27,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    paymentInfo: {
-        type: String,
-        required:false,
-    },
     childUsername: {
         type: String,
         required: true,
@@ -46,7 +42,11 @@ const userSchema = new mongoose.Schema({
     confirmedAge: {
         type: Boolean,
         required: true,
-    }
+    },
+    interests: {
+         type: [String],
+          required: false,
+         }
 });
 
 userSchema.pre('save', async function (next) {

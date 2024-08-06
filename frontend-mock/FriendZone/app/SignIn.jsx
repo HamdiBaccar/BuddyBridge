@@ -18,7 +18,7 @@ const SignIn = () => {
 
     const GoToSignUpPress = () => {
         console.log('Navigating to SignUp page');
-        router.push('/Payment');
+        router.push('/SignUp');
       };
       
   const [username, setUsername] = useState('');
@@ -39,7 +39,7 @@ const SignIn = () => {
       }
 
       // Make API request
-      const response = await fetch('http://192.168.100.168:3000/api/auth/signin', {
+      const response = await fetch('http://localhost:3000/api/auth/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ const SignIn = () => {
 
       // Handle API response
       if (response.ok) {
-        // Successful sign-in, handle success (e.g., navigate to next screen)
+        return Alert.alert('Sign-in successful !')
         console.log('Sign-in successful');
       } else {
         // Error in sign-in, handle error (e.g., display error message)

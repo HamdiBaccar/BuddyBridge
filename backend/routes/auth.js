@@ -11,7 +11,7 @@ router.post('/signup', async (req, res) => {
     try {
         const {
             CIN, parentName,parentEmail, parentPassword, phoneNumber,
-            address, paymentInfo, childUsername, childAge,
+            address,childUsername, childAge,
             governorat, confirmedAge
         } = req.body;
 
@@ -21,7 +21,7 @@ router.post('/signup', async (req, res) => {
 
         const user = new User({
             CIN, parentName, parentEmail, parentPassword, phoneNumber,
-            address, paymentInfo, childUsername, childAge,
+            address, childUsername, childAge,
             governorat, confirmedAge
         });
         await user.save();
@@ -38,30 +38,6 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-
-router.post('/confirm-payment', async (req, res) => {
-    try {
-        const { paymentIntentId, userId } = req.body;
-
-        // Retrieve the payment intent
-        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-        if (paymentIntent.status === 'succeeded') {
-            const user = await User.findById(userId);
-            if (user) {
-                user.paymentStatus = 'completed';
-                await user.save();
-                res.send('Payment confirmed and user registration completed');
-            } else {
-                res.status(404).send('User not found');
-            }
-        } else {
-            res.status(400).send('Payment not successful');
-        }
-    } catch (err) {
-        res.status(400).send(err.message);
-    }
-});
 
 router.post('/signin', async (req, res) => {
     try {

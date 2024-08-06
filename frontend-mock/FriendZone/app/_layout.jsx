@@ -34,8 +34,10 @@ const RootLayout = () => {
     <View style={styles.container}>
       <Stack>
 <Stack.Screen name="index" options={{headerShown : false}}/>
-<Stack.Screen name="Payment" options = {{headerShown : false}}/>
+<Stack.Screen name="SignUp" options = {{headerShown : false}}/>
 <Stack.Screen name="SignIn" options = {{headerShown : false}}/>
+<Stack.Screen name="HomePage" options = {{headerShown : false}}/>
+<Stack.Screen name="ViewMorePage" options={{headerShown : false}} />
         </Stack>
     </View>
   );

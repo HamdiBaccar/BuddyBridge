@@ -9,11 +9,3 @@ const api = axios.create({
 export const signup = async (userData) => {
   return await api.post('/api/auth/signup', userData);
 };
-
-export const confirmPayment = async (paymentData) => {
-  return await api.post('/api/auth/confirm-payment', paymentData);
-};
-
-export const createCheckoutSession = async (userId) => {
-  return await api.post('/stripe/create-checkout-session', { userId });
-};

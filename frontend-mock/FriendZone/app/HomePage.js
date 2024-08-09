@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, FlatList,TouchableOpacity,Dimensions} from 'react-native';
-import {React,useState,useEffect} from 'react';
+import { StyleSheet, Text, View, FlatList,TouchableOpacity,Dimensions,Animated,Image} from 'react-native';
+import {React,useState,useEffect,useRef} from 'react';
 import Sidebar from '../assets/SVGs/Sidebar';
 import Profile from '../assets/SVGs/Profile';
 import ArrowsPic from '../assets/SVGs/arrows';
@@ -9,18 +9,31 @@ import ProfileIB from '../assets/SVGs/ProfileIconBox';
 import HeartCircle from '../assets/SVGs/HeartCircle';
 import Localisation from '../assets/SVGs/Localisation';
 import { router } from 'expo-router';
-const { width, height } = Dimensions.get('window');
+import MyProfile from '../assets/SVGs/MyProfile';
+import MessageCircle from '../assets/SVGs/MessageCircle';
+import Calendar from '../assets/SVGs/Calendar';
+import Bookmark from '../assets/SVGs/Bookmark';
+import Mail from '../assets/SVGs/Mail';
+import Settings from '../assets/SVGs/Settings';
+import HelpCircle from '../assets/SVGs/HelpCircle';
+import Logout from '../assets/SVGs/Logout';
+import ProfPic from '../assets/ProfPic.png'
 
+
+const { width, height } = Dimensions.get('window');
+const sidebarWidth = (202 / 375) * width;
 const HomePage = () => {
   const [friends, setFriends] = useState([]);
   const [error, setError] = useState(null); 
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const sidebarAnimation = useRef(new Animated.Value(0)).current;
   
   useEffect(() => {
     const userId = '66ae6cc6b678312930df126c'; 
 
     const fetchSuggestions = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/suggest-friends/${userId}`);
+        const response = await fetch(`http://192.168.1.243:3000/api/suggest-friends/${userId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -40,28 +53,100 @@ const HomePage = () => {
     router.push('/ViewMorePage');
   };
   
+  const toggleSidebar = () => {
+    const toValue = isSidebarVisible ? 0 : 1;
+    Animated.timing(sidebarAnimation, {
+      toValue,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setIsSidebarVisible(!isSidebarVisible));
+  };
+
+  const sidebarTranslateX = sidebarAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-sidebarWidth, 0], // Sidebar slides in and out
+  });
+
+  const contentTranslateX = sidebarAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, sidebarWidth], // Content slides right
+  });
   return (
     <View style={styles.container}>
-      <View style={styles.iconRow}>
-        <Sidebar style={styles.icon} />
-        
-        <View style={styles.searchContainer}>
+      <Animated.View style={[styles.sidebar, { transform: [{ translateX: sidebarTranslateX }] }]}>
+        <View style={styles.profilecircle}>
+        <Image
+        source={ProfPic} // Replace with your image URL or local file
+        style={styles.profileImage}
+      />
+        </View>
+        <Text style={styles.Name}>Flen Fouleni</Text>
+        <View style={styles.sidebarContent}>
+
+            <View style={styles.iconContainer}>
+<MyProfile style={styles.prof}/>
+<Text style={styles.myprofileInfo}>My Profile</Text>
+</View>
+
+<View style={styles.iconContainer1}>
+<MessageCircle style={styles.mes}/>
+<Text style={styles.messageInfo}>Message</Text>
+</View>
+
+<View style={styles.iconContainer1}>
+<Calendar style={styles.cal}/>
+<Text style={styles.calendarInfo}>Calendar</Text>
+</View>
+
+<View style={styles.iconContainer1}>
+<Bookmark style={styles.book}/>
+<Text style={styles.bookmarkInfo}>Bookmark</Text>
+</View>
+
+<View style={styles.iconContainer1}>
+<Mail style={styles.mail}/>
+<Text style={styles.mailInfo}>Contact us</Text>
+</View>
+
+<View style={styles.iconContainer1}>
+<Settings style={styles.set}/>
+<Text style={styles.settingsInfo}>Settings</Text>
+</View>
+
+<View style={styles.iconContainer1}>
+<HelpCircle style={styles.help}/>
+<Text style={styles.helpInfo}>Helps & FAQs</Text>
+</View>
+
+<View style={styles.iconContainer1}>
+<Logout style={styles.log}/>
+<Text style={styles.logoutInfo}>Log Out</Text>
+</View>
+        </View>
+      </Animated.View>
+      
+      <Animated.View style={[styles.content, { transform: [{ translateX: contentTranslateX }] }]}>
+        <View style={styles.iconRow}>
+          <TouchableOpacity onPress={toggleSidebar}>
+          <Sidebar style={styles.icon} />
+          </TouchableOpacity>
+          <View style={styles.searchContainer}>
           <FontAwesome name="search" size={18} color="#000000" style={styles.searchIcon} />
-        </View>
-        <View style={styles.arrowButton}>
+          </View>
+          <View style={styles.arrowButton}>
         <ArrowsPic style={styles.ArrowInput} />
+          </View>
+          <Profile style={styles.ProfilePic} />
         </View>
-        <Profile style={styles.ProfilePic} />
-      </View>
-      <View style={styles.titleContainer}>
-        <Text style={styles.Suggest}>Friends Suggestions</Text>
-        <TouchableOpacity onPress={GoToViewMorePage}>
-          <View style={styles.viewMoreContainer}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.Suggest}>Friends Suggestions</Text>
+          <TouchableOpacity onPress={() => console.log('Go to view more page')}>
+            <View style={styles.viewMoreContainer}>
             <Text style={styles.viewMore}>View More</Text>
             <Vector style={styles.vectorIcon} />
-          </View>
-        </TouchableOpacity>
-      </View>
+            </View>
+          </TouchableOpacity>
+        </View>
       <View style={styles.BoxView}>
         <FlatList
           data={friends.slice(0, 4)}
@@ -91,6 +176,7 @@ const HomePage = () => {
           contentContainerStyle={styles.contentContainer}
         />
       </View>
+      </Animated.View>
     </View>
   );
 };
@@ -105,8 +191,168 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   
+Name:{
+fontSize: 20,
+fontWeight: '500',
+fontFamily: 'Poppins-Medium',
+marginTop: 9,
+marginRight: 16,
+},
 
 
+
+sidebarContent:{
+  alignItems: 'center',
+  justifyContent: 'center',
+marginTop: 24,
+marginRight: 18,
+},
+
+prof:{
+right: 15,
+},
+
+myprofileInfo:{
+fontFamily: 'Poppins-SemiBold',
+fontSize: 16,
+fontWeight: '600',
+},
+
+iconContainer:{
+flexDirection: 'row',
+},
+
+iconContainer1:{
+  flexDirection: 'row',
+  marginTop: 32,
+},
+
+mes:{
+  right: 17,
+  top:3,
+  },
+  
+  messageInfo:{
+  fontFamily: 'Poppins-SemiBold',
+  fontSize: 16,
+  fontWeight: '600',
+  },
+  
+iconContainer1:{
+    flexDirection: 'row',
+    marginTop: 32,
+  },
+  cal:{
+    right: 15,
+    },
+    
+    calendarInfo:{
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 16,
+    fontWeight: '600',
+    },
+
+iconContainer1:{
+flexDirection: 'row',
+marginTop: 32,
+},
+
+book:{
+  right: 8,
+  },
+  
+  bookmarkInfo:{
+  fontFamily: 'Poppins-SemiBold',
+  fontSize: 16,
+  fontWeight: '600',
+  marginLeft: 7,
+  },
+
+ iconContainer1:{
+          flexDirection: 'row',
+          marginTop: 32,
+          },
+          mail:{
+            right: 3,
+            },
+            
+           mailInfo:{
+            fontFamily: 'Poppins-SemiBold',
+            fontSize: 16,
+            fontWeight: '600',
+            marginLeft: 10,
+            },
+          iconContainer1:{
+            flexDirection: 'row',
+            marginTop: 32,
+            },
+            set:{
+              right: 13,
+              },
+              
+              settingsInfo:{
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 16,
+              fontWeight: '600',
+              marginRight: 12,
+              },
+            iconContainer1:{
+              flexDirection: 'row',
+              marginTop: 32,
+              },
+              help:{
+                left: 12,
+                },
+                
+                helpInfo:{
+                fontFamily: 'Poppins-SemiBold',
+                fontSize: 16,
+                fontWeight: '600',
+                marginLeft: 26,
+                },
+              iconContainer1:{
+                flexDirection: 'row',
+                marginTop: 32,
+                },
+
+                log:{
+                  right: 17,
+                  },
+                  
+                 logoutInfo:{
+                  fontFamily: 'Poppins-SemiBold',
+                  fontSize: 16,
+                  fontWeight: '600',
+                  marginRight: 14,
+                  },
+
+  sidebar: {
+    position: 'absolute',
+    top: (50/375)*width,
+    bottom: 0,
+    left: 0,
+    right: sidebarWidth,
+    width: sidebarWidth,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderColor: '4D4D4D',
+    borderWidth: 1,
+    zIndex: 2,
+    padding: 20,
+  },
+
+
+
+profilecircle:{
+  width: 58,
+  height: 58,
+  borderRadius: 29,
+  borderColor: '#1C3F83',
+   borderWidth: 1,
+   overflow: 'hidden', 
+    justifyContent: 'center', 
+    alignItems: 'center',
+},
 
   iconRow: {
     flexDirection: 'row',
@@ -149,6 +395,7 @@ const styles = StyleSheet.create({
   },
 
   arrowButton:{
+    justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#1C3F83',
     borderWidth: 1,
@@ -163,8 +410,7 @@ const styles = StyleSheet.create({
   ArrowInput:{
     width: width * 0.05, 
     height: height * 0.025, 
-     
-    marginTop: height * 0.005, 
+
   },
 
   ProfilePic: {
@@ -177,6 +423,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   searchContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#1C3F83',
     borderWidth: 1,
@@ -189,8 +436,6 @@ const styles = StyleSheet.create({
   searchIcon: {
     width: width * 0.05, 
     height: height * 0.025, 
-    marginLeft: width * 0.008, 
-    marginTop: height * 0.005, 
   },
   verticalLine: {
     height: '70%',
@@ -241,12 +486,12 @@ const styles = StyleSheet.create({
   viewMoreContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center'
   },
   vectorIcon: {
     width: width * 0.05, 
     height: height * 0.025, 
-    marginTop: height * 0.009, 
-    marginLeft: width * 0.02, 
+    marginLeft: 3,
   },
   circle: {
     width: width * 0.125, 
@@ -268,7 +513,7 @@ const styles = StyleSheet.create({
     top: (163/1012)*height, 
     position: 'absolute',
     shadowColor: '#56A7FF', // shadow color
-    shadowOffset: { width: 0, height: 4 }, // shadow offset
+    shadowOffset: { width: 0, height: 4 }, 
     shadowOpacity: 0.25, // shadow opacity (64/255 = 0.25)
     shadowRadius: 4, // shadow radius
     elevation: 4, // for Android
@@ -298,6 +543,6 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
   },
   contentContainer: {
-    paddingHorizontal: width * 0.025,
+    paddingHorizontal: width * 0.01,
   },
 });

@@ -52,6 +52,10 @@ const HomePage = () => {
   const GoToViewMorePage = () => {
     router.push('/ViewMorePage');
   };
+
+  const GoToProfilePage = () => {
+    router.push('/Profile');
+  };
   
   const toggleSidebar = () => {
     const toValue = isSidebarVisible ? 0 : 1;
@@ -76,7 +80,7 @@ const HomePage = () => {
       <Animated.View style={[styles.sidebar, { transform: [{ translateX: sidebarTranslateX }] }]}>
         <View style={styles.profilecircle}>
         <Image
-        source={ProfPic} // Replace with your image URL or local file
+        source={ProfPic}
         style={styles.profileImage}
       />
         </View>
@@ -130,13 +134,16 @@ const HomePage = () => {
           <TouchableOpacity onPress={toggleSidebar}>
           <Sidebar style={styles.icon} />
           </TouchableOpacity>
+          
           <View style={styles.searchContainer}>
           <FontAwesome name="search" size={18} color="#000000" style={styles.searchIcon} />
           </View>
           <View style={styles.arrowButton}>
         <ArrowsPic style={styles.ArrowInput} />
           </View>
+          <TouchableOpacity onPress={GoToProfilePage}>
           <Profile style={styles.ProfilePic} />
+          </TouchableOpacity>
         </View>
         <View style={styles.titleContainer}>
           <Text style={styles.Suggest}>Friends Suggestions</Text>
@@ -473,7 +480,7 @@ profilecircle:{
     fontWeight: '500',
     fontSize: width * 0.045, 
     marginLeft: width * 0.05, 
-    marginBottom: height * 0.007, 
+    marginTop: height * -0.003, 
   },
   viewMore: {
     color: '#747688',
